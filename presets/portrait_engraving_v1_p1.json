@@ -1,0 +1,51 @@
+{
+  "name": "portrait_engraving_v1_p1",
+  "description": "Pass 1: Convert historical portrait engravings to photorealistic portraits",
+  "version": "1.0.0",
+  "preset_type": "portrait_engraving",
+  "pass": 1,
+  "intended_image_type": "Historical portrait engravings, etchings, lithographs of people",
+  "pass_purpose": "Translate engraving to photorealistic portrait while preserving facial features and expression",
+  "generation_params": {
+    "steps": 32,
+    "cfg_scale": 5.0,
+    "denoise": 0.30,
+    "sampler": "euler",
+    "scheduler": "normal",
+    "seed": -1,
+    "width": 768,
+    "height": 1024
+  },
+  "model_config": {
+    "base": "sd_xl_base_1.0.safetensors"
+  },
+  "controlnet_planned": [
+    {"model": "lineart", "weight": 0.85, "status": "planned"},
+    {"model": "depth", "weight": 0.5, "status": "planned"}
+  ],
+  "prompt_templates": {
+    "positive": "photorealistic portrait photograph, detailed facial features, realistic skin texture, natural lighting, professional portrait photography, high quality, expressive eyes, authentic appearance",
+    "negative": "drawing, sketch, engraving, etching, monochrome, black and white, illustration, cartoon, plastic skin, CGI, render, distorted features, malformed eyes, text, watermark"
+  },
+  "starting_parameter_ranges": {
+    "denoise": {"min": 0.25, "max": 0.35, "note": "Lower denoise critical for facial feature preservation"},
+    "cfg_scale": {"min": 4.5, "max": 5.5},
+    "steps": {"min": 30, "max": 36}
+  },
+  "expected_failure_modes": [
+    "Facial features may distort if denoise > 0.35",
+    "Expression may change",
+    "Hair details may be lost or over-generated",
+    "Skin may look too smooth/plastic"
+  ],
+  "review_criteria": [
+    "Facial features recognizable",
+    "Expression preserved",
+    "Natural skin texture (not plastic)",
+    "Hair realistic",
+    "Eyes expressive and correct",
+    "Color present (not monochrome)"
+  ],
+  "pass_2_input": true,
+  "notes": "Portraits require highest fidelity. Lower denoise than other archetypes. ControlNet lineart critical for feature preservation."
+}

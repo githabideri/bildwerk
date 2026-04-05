@@ -1,0 +1,79 @@
+{
+  "title": "Bildwerk Router - Active img2img Workflow (NO ControlNet)",
+  "description": "CURRENT ACTIVE WORKFLOW: Basic 8-node img2img workflow built by router/__init__.py _build_comfyui_workflow(). This is the EXACT workflow currently submitted to ComfyUI /prompt endpoint. ControlNet is NOT included despite what the preset says - the router code does not implement ControlNet yet.",
+  "timestamp": "2026-04-03T12:56:00Z",
+  "source_code": "router/__init__.py:_build_comfyui_workflow() lines 287-384",
+  "format": "ComfyUI API prompt JSON (not UI workflow JSON)",
+  "nodes": {
+    "1": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "SOURCE_FILENAME_WILL_BE_HERE",
+        "upload": "image"
+      }
+    },
+    "2": {
+      "class_type": "CheckpointLoaderSimple",
+      "inputs": {
+        "ckpt_name": "sd_xl_base_1.0.safetensors"
+      }
+    },
+    "3": {
+      "class_type": "VAEEncode",
+      "inputs": {
+        "pixels": ["1", 0],
+        "vae": ["2", 2]
+      }
+    },
+    "4": {
+      "class_type": "KSampler",
+      "inputs": {
+        "cfg": 7.5,
+        "denoise": 0.45,
+        "latent_image": ["3", 0],
+        "model": ["2", 0],
+        "negative": ["7", 0],
+        "positive": ["5", 0],
+        "sampler_name": "euler",
+        "scheduler": "normal",
+        "seed": -1,
+        "steps": 20
+      }
+    },
+    "5": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": ["2", 1],
+        "text": "photorealistic modern building facade, high quality, detailed architecture, natural lighting, 8k"
+      }
+    },
+    "6": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": ["4", 0],
+        "vae": ["2", 2]
+      }
+    },
+    "7": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": ["2", 1],
+        "text": "drawing, painting, sketch, illustration, low quality, blurry, distorted, text, watermark"
+      }
+    },
+    "8": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "filename_prefix": "BILDWORK_IMG2IMG",
+        "images": ["6", 0]
+      }
+    }
+  },
+  "notes": [
+    "This is the BASIC img2img workflow used by the router in production",
+    "ControlNet is NOT included - the router code has not been updated to use it",
+    "The interior_passage_v2_p1 preset mentions ControlNet but it is not implemented in the router",
+    "For ControlNet workflow, use: workflows/interior_passage_v2_p1_controlnet.json",
+    "Dynamic values: seed, denoise, cfg, sampler, scheduler come from preset config"
+  ]
+}

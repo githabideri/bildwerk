@@ -1,0 +1,48 @@
+{
+  "name": "interior_passage_v2_p2",
+  "description": "Pass 2: Photographic refinement for interior passages. Polish materials, lighting, color richness.",
+  "version": "2.0.0",
+  "preset_type": "interior_passage",
+  "pass": 2,
+  "intended_image_type": "Output from interior_passage_v2_p1",
+  "pass_purpose": "Enhance material richness, color depth, lighting realism without changing geometry",
+  "generation_params": {
+    "steps": 25,
+    "cfg_scale": 4.5,
+    "denoise": 0.15,
+    "sampler": "euler",
+    "scheduler": "normal",
+    "seed": -1,
+    "width": 1024,
+    "height": 768
+  },
+  "model_config": {
+    "base": "sd_xl_base_1.0.safetensors"
+  },
+  "controlnet_planned": [
+    {"model": "depth", "weight": 0.4, "status": "optional"}
+  ],
+  "prompt_templates": {
+    "positive": "photorealistic architectural photography, rich limestone texture, subtle color variation in stone, natural daylight with realistic shadows and highlights, documentary style, high detail, authentic materials, professional camera",
+    "negative": "drawing, sketch, monochrome, flat lighting, plastic, CGI, render, overexposed, washed out, distorted, blurry, low quality, text, watermark"
+  },
+  "starting_parameter_ranges": {
+    "denoise": {"min": 0.10, "max": 0.20, "note": "Low denoise preserves pass 1 geometry"},
+    "cfg_scale": {"min": 4.0, "max": 5.0},
+    "steps": {"min": 20, "max": 30}
+  },
+  "expected_failure_modes": [
+    "denoise > 0.20: May alter geometry from pass 1",
+    "cfg > 5.5: Overpowers pass 1 result",
+    "Insufficient color in pass 1: Cannot recover monochrome"
+  ],
+  "review_criteria": [
+    "Geometry unchanged from pass 1",
+    "Enhanced material richness",
+    "Better color depth and variation",
+    "Improved lighting realism",
+    "No new artifacts introduced"
+  ],
+  "pass_1_input_required": "interior_passage_v2_p1",
+  "notes": "Two-pass refinement. Only use if pass 1 is structurally correct but lacks material richness. Low denoise critical to preserve pass 1 geometry."
+}

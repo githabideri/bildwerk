@@ -1,0 +1,57 @@
+{
+  "3": {
+    "inputs": {"image": "309.jpg", "upload": "image"},
+    "class_type": "LoadImage",
+    "_meta": {"title": "LoadImage"}
+  },
+  "4": {
+    "inputs": {"ckpt_name": "sd_xl_base_1.0.safetensors"},
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {"title": "CheckpointLoaderSimple"}
+  },
+  "5": {
+    "inputs": {"image": "309.jpg", "vae": ["4", 2]},
+    "class_type": "VAEEncode",
+    "_meta": {"title": "VAEEncode"}
+  },
+  "6": {
+    "inputs": {"width": 1024, "height": 768, "batch_size": 1},
+    "class_type": "EmptyLatentImage",
+    "_meta": {"title": "EmptyLatentImage"}
+  },
+  "7": {
+    "inputs": {"clip": ["4", 1], "text": "present-day color architectural photograph of an interior passage with vaulted ceiling, realistic stone masonry, natural daylight, authentic limestone textures, documentary photography style, warm gray tones, professional architectural photography, high resolution"},
+    "class_type": "CLIPTextEncode",
+    "_meta": {"title": "CLIPTextEncode"}
+  },
+  "8": {
+    "inputs": {"clip": ["4", 1], "text": "black and white, monochrome, sketch, drawing, engraving, illustration, etching, CGI, 3D render, plastic surfaces, washed out, overexposed, distorted geometry, malformed arches, unrealistic textures, text, watermark, low quality"},
+    "class_type": "CLIPTextEncode",
+    "_meta": {"title": "CLIPTextEncode"}
+  },
+  "9": {
+    "inputs": {"control_net_name": "controlnet_union_sdxl.safetensors", "model": ["4", 0]},
+    "class_type": "ControlNetLoader",
+    "_meta": {"title": "ControlNetLoader"}
+  },
+  "10": {
+    "inputs": {"positive": ["7", 0], "negative": ["8", 0], "control_net": ["9", 0], "image": ["3", 0], "strength": 0.75, "start_percent": 0.0, "end_percent": 1.0},
+    "class_type": "ControlNetApplyAdvanced",
+    "_meta": {"title": "ControlNetApplyAdvanced"}
+  },
+  "11": {
+    "inputs": {"seed": 12345, "steps": 32, "cfg": 5.2, "sampler_name": "euler_ancestral", "scheduler": "normal", "denoise": 0.42, "model": ["4", 0], "positive": ["10", 0], "negative": ["10", 1], "latent_image": ["5", 0]},
+    "class_type": "KSampler",
+    "_meta": {"title": "KSampler"}
+  },
+  "12": {
+    "inputs": {"samples": ["11", 0], "vae": ["4", 2]},
+    "class_type": "VAEDecode",
+    "_meta": {"title": "VAEDecode"}
+  },
+  "13": {
+    "inputs": {"filename_prefix": "interior_pass1_309", "images": ["12", 0]},
+    "class_type": "SaveImage",
+    "_meta": {"title": "SaveImage"}
+  }
+}

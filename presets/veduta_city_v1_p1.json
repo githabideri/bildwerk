@@ -1,0 +1,49 @@
+{
+  "name": "veduta_city_v1_p1",
+  "description": "Pass 1: Convert historical city views (Veduten) to modern photorealistic cityscapes",
+  "version": "1.0.0",
+  "preset_type": "veduta_city",
+  "pass": 1,
+  "intended_image_type": "Historical city views, architectural panoramas, Vedute engravings",
+  "pass_purpose": "Translate historical engraving to modern cityscape while preserving landmarks and layout",
+  "generation_params": {
+    "steps": 20,
+    "cfg_scale": 7.5,
+    "denoise": 0.45,
+    "sampler": "euler_ancestral",
+    "scheduler": "normal",
+    "seed": -1,
+    "width": 1024,
+    "height": 768
+  },
+  "model_config": {
+    "base": "sd_xl_base_1.0.safetensors"
+  },
+  "controlnet_planned": [
+    {"model": "softedge", "weight": 0.8, "status": "planned"},
+    {"model": "depth", "weight": 0.6, "status": "planned"}
+  ],
+  "prompt_templates": {
+    "positive": "photorealistic modern city view of {city}, high quality, detailed architecture, natural lighting, 8k",
+    "negative": "drawing, painting, sketch, illustration, engraving, low quality, blurry, distorted, text, watermark"
+  },
+  "starting_parameter_ranges": {
+    "denoise": {"min": 0.40, "max": 0.55, "note": "Higher denoise acceptable for city views"},
+    "cfg_scale": {"min": 7.0, "max": 8.0},
+    "steps": {"min": 18, "max": 25}
+  },
+  "expected_failure_modes": [
+    "Landmarks may change character if denoise too high",
+    "Sky may be over-generated",
+    "Historical buildings may become too modern"
+  ],
+  "review_criteria": [
+    "Major landmarks recognizable",
+    "City layout preserved",
+    "Modern photorealistic quality",
+    "Sky natural (not over-generated)",
+    "Building styles appropriate"
+  ],
+  "pass_2_input": true,
+  "notes": "Original vedute preset. Higher denoise acceptable for city views where exact building details less critical than overall layout."
+}

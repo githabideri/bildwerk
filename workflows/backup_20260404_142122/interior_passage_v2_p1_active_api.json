@@ -1,0 +1,65 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "SOURCE_IMAGE_FILENAME",
+      "upload": "image"
+    }
+  },
+  "2": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": {
+      "ckpt_name": "sd_xl_base_1.0.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": ["1", 0],
+      "vae": ["2", 2]
+    }
+  },
+  "4": {
+    "class_type": "KSampler",
+    "inputs": {
+      "cfg": 5.2,
+      "denoise": 0.42,
+      "latent_image": ["3", 0],
+      "model": ["2", 0],
+      "negative": ["7", 0],
+      "positive": ["5", 0],
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "seed": -1,
+      "steps": 32
+    }
+  },
+  "5": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["2", 1],
+      "text": "present-day color architectural photograph of the same vaulted stone passage, realistic limestone masonry, authentic stone floor slabs, documentary photography, natural daylight, subtle warm gray tones, realistic shadows, photographed with a modern camera"
+    }
+  },
+  "6": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["4", 0],
+      "vae": ["2", 2]
+    }
+  },
+  "7": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["2", 1],
+      "text": "black and white, monochrome, sketch, drawing, engraving, illustration, etching, CGI, render, plastic surfaces, washed out, overexposed, distorted arches, malformed columns, unrealistic textures, text, watermark"
+    }
+  },
+  "8": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "BILDWORK_IMG2IMG",
+      "images": ["6", 0]
+    }
+  }
+}

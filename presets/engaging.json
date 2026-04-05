@@ -1,0 +1,19 @@
+{
+  "name": "engaging",
+  "description": "Vibrant cinematic modern building photo",
+  "model_config": {
+    "base": "flux-2-klein-4b-fp8.safetensors",
+    "variant": "klein"
+  },
+  "prompt_templates": {
+    "positive": "vibrant modern color photograph, cinematic lighting, rich colors, highly detailed, architectural photography, 8k quality",
+    "negative": "drawing, painting, sketch, illustration, low quality, blurry, distorted, text, watermark"
+  },
+  "generation_params": {
+    "steps": 4,
+    "cfg_scale": 1,
+    "seed": -1,
+    "sampler": "euler",
+    "scheduler": "normal"
+  }
+}

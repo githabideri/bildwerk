@@ -1,0 +1,166 @@
+{
+  "title": "Interior Pass 1 - ControlNet Structure Preservation",
+  "description": "Pass 1: Convert architectural sketch to present-day photograph with ControlNet guidance",
+  "timestamp": "2026-04-02T08:00:00Z",
+  "version": "1.0",
+  "nodes": [
+    {
+      "id": "LoadImage",
+      "type": "LoadImage",
+      "pos": [100, 100],
+      "size": {"0": 315, "1": 350},
+      "inputs": {"image": ""},
+      "outputs": [{"name": "IMAGE", "type": "IMAGE"}],
+      "properties": {"P-node": {"class": "LoadImage"}},
+      "values": {
+        "image": "interior_passage_source.png"
+      }
+    },
+    {
+      "id": "CheckpointLoader",
+      "type": "CheckpointLoaderSimple",
+      "pos": [100, 500],
+      "size": {"0": 315, "1": 230},
+      "inputs": {"ckpt_name": "sd_xl_base_1.0.safetensors"},
+      "outputs": [{"name": "MODEL", "type": "MODEL"}, {"name": "CLIP", "type": "CLIP"}, {"name": "VAE", "type": "VAE"}],
+      "properties": {"P-node": {"class": "CheckpointLoaderSimple"}},
+      "values": {
+        "ckpt_name": "sd_xl_base_1.0.safetensors"
+      }
+    },
+    {
+      "id": "ControlNetLoader",
+      "type": "ControlNetLoader",
+      "pos": [500, 500],
+      "size": {"0": 315, "1": 82},
+      "inputs": {"control_net_name": "controlnet_union_sdxl.safetensors"},
+      "outputs": [{"name": "CONTROL_NET", "type": "CONTROL_NET"}],
+      "properties": {"P-node": {"class": "ControlNetLoader"}},
+      "values": {
+        "control_net_name": "controlnet_union_sdxl.safetensors"
+      }
+    },
+    {
+      "id": "ControlNetApply",
+      "type": "ControlNetApplyAdvanced",
+      "pos": [900, 500),
+      "size": {"0": 315, "1": 140},
+      "inputs": {
+        "positive": ["CLIP正 Encode", "positive"],
+        "negative": ["CLIP 负 Encode", "negative"],
+        "control_net": ["ControlNetLoader", "0"],
+        "image": ["LoadImage", "0"],
+        "strength": ["KSampler", "strength"]
+      },
+      "outputs": [{"name": "positive", "type": "CONDITIONING"}, {"name": "negative", "type": "CONDITIONING"}],
+      "properties": {"P-node": {"class": "ControlNetApplyAdvanced"}},
+      "values": {
+        "strength": 0.75,
+        "start_percent": 0.0,
+        "end_percent": 1.0
+      }
+    },
+    {
+      "id": "CLIP Positive",
+      "type": "CLIPTextEncode",
+      "pos": [100, 900),
+      "size": {"0": 315, "1": 106},
+      "inputs": {"clip": ["CheckpointLoader", "1"], "text": "prompt"},
+      "outputs": [{"name": "CONDITIONING", "type": "CONDITIONING"}],
+      "properties": {"P-node": {"class": "CLIPTextEncode"}},
+      "values": {
+        "text": "present-day color architectural photograph of an interior passage with vaulted ceiling, realistic stone masonry, natural daylight, authentic limestone textures, documentary photography style, warm gray tones, professional architectural photography, high resolution"
+      }
+    },
+    {
+      "id": "CLIP Negative",
+      "type": "CLIPTextEncode",
+      "pos": [100, 1050),
+      "size": {"0": 315, "1": 106},
+      "inputs": {"clip": ["CheckpointLoader", "1"], "text": "prompt"},
+      "outputs": [{"name": "CONDITIONING", "type": "CONDITIONING"}],
+      "properties": {"P-node": {"class": "CLIPTextEncode"}},
+      "values": {
+        "text": "black and white, monochrome, sketch, drawing, engraving, illustration, etching, CGI, 3D render, plastic surfaces, washed out, overexposed, distorted geometry, malformed arches, unrealistic textures, text, watermark, low quality"
+      }
+    },
+    {
+      "id": "KSampler",
+      "type": "KSampler",
+      "pos": [900, 1000),
+      "size": {"0": 315, "1": 270},
+      "inputs": {
+        "model": ["CheckpointLoader", "0"],
+        "positive": ["ControlNetApplyAdvanced", "0"],
+        "negative": ["ControlNetApplyAdvanced", "1"],
+        "latent_image": ["EmptyLatentImage", "0"],
+        "seed": ["RandomNoise", "seed"],
+        "steps": ["KSampler", "steps"],
+        "cfg": ["KSampler", "cfg"]
+      },
+      "outputs": [{"name": "LATENT", "type": "LATENT"}, {"name": "IMAGE", "type": "IMAGE"}],
+      "properties": {"P-node": {"class": "KSampler"}},
+      "values": {
+        "steps": 32,
+        "cfg": 5.2,
+        "sampler_name": "euler_ancestral",
+        "scheduler": "normal",
+        "denoise": 0.42,
+        "seed": -1
+      }
+    },
+    {
+      "id": "VAEEncode",
+      "type": "VAEEncode",
+      "pos": [500, 1000),
+      "size": {"0": 315, "1": 46},
+      "inputs": {"pixels": ["LoadImage", "0"], "vae": ["CheckpointLoader", "2"]},
+      "outputs": [{"name": "LATENT", "type": "LATENT"}],
+      "properties": {"P-node": {"class": "VAEEncode"}},
+      "values": {}
+    },
+    {
+      "id": "EmptyLatentImage",
+      "type": "EmptyLatentImage",
+      "pos": [100, 1200),
+      "size": {"0": 315, "1": 106},
+      "inputs": {"width": 1024, "height": 768, "batch_size": 1},
+      "outputs": [{"name": "LATENT", "type": "LATENT"}],
+      "properties": {"P-node": {"class": "EmptyLatentImage"}},
+      "values": {
+        "width": 1024,
+        "height": 768,
+        "batch_size": 1
+      }
+    },
+    {
+      "id": "SaveImage",
+      "type": "SaveImage",
+      "pos": [1300, 1000),
+      "size": {"0": 315, "1": 270},
+      "inputs": {"images": ["KSampler", "0"]},
+      "outputs": [],
+      "properties": {"P-node": {"class": "SaveImage"}},
+      "values": {
+        "filename_prefix": "interior_passage_pass1"
+      }
+    }
+  ],
+  "config": {
+    "denoise": 0.42,
+    "cfg": 5.2,
+    "steps": 32,
+    "controlnet_strength": 0.75,
+    "width": 1024,
+    "height": 768,
+    "sampler": "euler_ancestral",
+    "scheduler": "normal"
+  },
+  "parameters": {
+    "pass": 1,
+    "preset": "interior_passage_v2_p1",
+    "model": "sd_xl_base_1.0.safetensors",
+    "controlnet": "controlnet_union_sdxl.safetensors",
+    "controlnet_mode": "union"
+  }
+}

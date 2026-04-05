@@ -1,0 +1,71 @@
+{
+  "name": "FLUX.2 Klein 4B Image Edit Distilled",
+  "nodes": {
+    "1": {
+      "inputs": {
+        "seed": 42,
+        "steps": 4,
+        "cfg": 1.5,
+        "sampler_name": "euler",
+        "scheduler": "simple",
+        "denoise": 1.0,
+        "positive": ["2", 0],
+        "negative": ["3", 0],
+        "model": ["4", 0],
+        "image": ["5", 0]
+      },
+      "class_type": "KSampler",
+      "display_name": "KSampler"
+    },
+    "2": {
+      "inputs": {
+        "text": "prompt",
+        "clip": ["4", 1]
+      },
+      "class_type": "CLIPTextEncode",
+      "display_name": "CLIP Text Encode (Positive)"
+    },
+    "3": {
+      "inputs": {
+        "text": "",
+        "clip": ["4", 1]
+      },
+      "class_type": "CLIPTextEncode",
+      "display_name": "CLIP Text Encode (Negative)"
+    },
+    "4": {
+      "inputs": {
+        "ckpt_name": "flux-2-klein-4b-fp8.safetensors"
+      },
+      "class_type": "CheckpointLoaderSimple",
+      "display_name": "Load Checkpoint"
+    },
+    "5": {
+      "inputs": {
+        "image": "input.png",
+        "upload": "image"
+      },
+      "class_type": "LoadImage",
+      "display_name": "Load Image"
+    },
+    "6": {
+      "inputs": {
+        "samples": ["1", 0],
+        "vae": ["4", 2]
+      },
+      "class_type": "VAEDecode",
+      "display_name": "VAE Decode"
+    },
+    "7": {
+      "inputs": {
+        "filename_prefix": "FLUX_KLEIN",
+        "images": ["6", 0]
+      },
+      "class_type": "SaveImage",
+      "display_name": "Save Image"
+    }
+  },
+  "version": 0.4,
+  "last_node_id": 7,
+  "last_link_id": 14
+}

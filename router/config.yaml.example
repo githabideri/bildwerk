@@ -1,0 +1,57 @@
+# bildwerk Router Configuration (EXAMPLE)
+# Copy this to config.yaml and customize for your deployment
+
+router:
+  name: bildwerk-router
+  listen_host: "0.0.0.0"
+  listen_port: 8080
+  poll_interval_seconds: 30
+  max_concurrent_jobs: 2
+
+nextcloud:
+  base_url: "https://your-nextcloud-instance.com"
+  username: "your-service-username"
+  # password is in secrets/nextcloud.yaml
+  folders:
+    base: "Shared/HGG16"
+    inbox: "inbox"
+    processing: "processing"
+    done: "done"
+    error: "error"
+    review: "review"
+
+workers:
+  - name: "gpu-worker"
+    url: "http://your-worker-ip:8188"
+    type: "gpu"
+    capacity: 1
+    host: "your-worker.hostname"
+    experimental: false
+
+backends:
+  sd_xl:
+    model: "sd_xl_base_1.0.safetensors"
+    workflow_file: "ACTIVE_ROUTER_WORKFLOW_basic_img2img.json"
+  flux_klein_local:
+    model: "flux-2-klein-4b-fp8.safetensors"
+    workflow_file: "flux_klein_generation_api.json"
+    upscale_workflow_file: "flux_klein_upscale_api.json"
+    two_stage: true
+    generation_params:
+      steps: 4
+      cfg_scale: 1
+      sampler: "euler"
+      scheduler: "normal"
+
+presets:
+  path: "/path/to/presets"
+  prompt_templates:
+    plausible: "photorealistic modern color photograph, high quality, detailed architecture, natural lighting, realistic materials"
+    engaging: "vibrant modern color photograph, cinematic lighting, rich colors, highly detailed, architectural photography, 8k quality"
+
+temp_path: "/tmp/bildwerk/router"
+staging_path: "/tmp/bildwerk/staging"
+
+logging:
+  level: "INFO"
+  format: "json"

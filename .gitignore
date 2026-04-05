@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment files (DO NOT COMMIT CREDENTIALS)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+batch_processing.log
+comfyui_submission.log
+comfyui_submission_fixed.log
+resume_processing.log
+
+# Router (contains secrets and runtime state)
+router/secrets/
+router/config.yaml
+router/temp/
+router/__pycache__/
+
+# Scripts cache
+scripts/__pycache__/
+
+# Descriptions/analysis output
+descriptions/
+
+# Temporary files
+*.tmp
+*.temp
+
+# State files
+state/
+tmp/
+
+# Output images
+output/
+test_output/
+
+# Private submodule (contains sensitive data)
+private/
+
+# Status and deployment docs (internal-only)
+STATUS.md
+DEPLOYMENT_STATUS.md

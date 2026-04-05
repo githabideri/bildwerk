@@ -1,0 +1,162 @@
+{
+  "last_node_id": 12,
+  "last_link_id": 21,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [100, 100],
+      "size": {"0": 315, "1": 350},
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [2], "slot_index": 0},
+        {"name": "MASK", "type": "MASK", "links": null, "slot_index": 1}
+      ],
+      "properties": {"Node name for S&R": "LoadImage"},
+      "widgets_values": ["SOURCE_IMAGE_FILENAME", "image", null, null, false]
+    },
+    {
+      "id": 2,
+      "type": "CheckpointLoaderSimple",
+      "pos": [100, 500],
+      "size": {"0": 315, "1": 230},
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {"name": "MODEL", "type": "MODEL", "links": [3], "slot_index": 0},
+        {"name": "CLIP", "type": "CLIP", "links": [4, 7], "slot_index": 1},
+        {"name": "VAE", "type": "VAE", "links": [5, 8], "slot_index": 2}
+      ],
+      "properties": {"Node name for S&R": "CheckpointLoaderSimple"},
+      "widgets_values": ["sd_xl_base_1.0.safetensors"]
+    },
+    {
+      "id": 3,
+      "type": "VAEEncode",
+      "pos": [500, 100],
+      "size": {"0": 210, "1": 46},
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {"name": "pixels", "type": "IMAGE", "link": 2, "slot_index": 0},
+        {"name": "vae", "type": "VAE", "link": 5, "slot_index": 1}
+      ],
+      "outputs": [
+        {"name": "LATENT", "type": "LATENT", "links": [6], "slot_index": 0}
+      ],
+      "properties": {"Node name for S&R": "VAEEncode"},
+      "widgets_values": []
+    },
+    {
+      "id": 4,
+      "type": "KSampler",
+      "pos": [750, 100],
+      "size": {"0": 315, "1": 262},
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {"name": "model", "type": "MODEL", "link": 3, "slot_index": 0},
+        {"name": "positive", "type": "CONDITIONING", "link": 9, "slot_index": 1},
+        {"name": "negative", "type": "CONDITIONING", "link": 10, "slot_index": 2},
+        {"name": "latent_image", "type": "LATENT", "link": 6, "slot_index": 3}
+      ],
+      "outputs": [
+        {"name": "LATENT", "type": "LATENT", "links": [11], "slot_index": 0}
+      ],
+      "properties": {"Node name for S&R": "KSampler"},
+      "widgets_values": [null, 0, 32, 5.2, "euler_ancestral", "normal", 0.42]
+    },
+    {
+      "id": 5,
+      "type": "CLIPTextEncode",
+      "pos": [500, 300],
+      "size": {"0": 400, "1": 200},
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {"name": "clip", "type": "CLIP", "link": 4, "slot_index": 0}
+      ],
+      "outputs": [
+        {"name": "CONDITIONING", "type": "CONDITIONING", "links": [9], "slot_index": 0}
+      ],
+      "properties": {"Node name for S&R": "CLIPTextEncode"},
+      "widgets_values": ["present-day color architectural photograph of the same vaulted stone passage, realistic limestone masonry, authentic stone floor slabs, documentary photography, natural daylight, subtle warm gray tones, realistic shadows, photographed with a modern camera"]
+    },
+    {
+      "id": 6,
+      "type": "VAEDecode",
+      "pos": [1100, 100],
+      "size": {"0": 210, "1": 46},
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {"name": "samples", "type": "LATENT", "link": 11, "slot_index": 0},
+        {"name": "vae", "type": "VAE", "link": 8, "slot_index": 1}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [12], "slot_index": 0}
+      ],
+      "properties": {"Node name for S&R": "VAEDecode"},
+      "widgets_values": []
+    },
+    {
+      "id": 7,
+      "type": "CLIPTextEncode",
+      "pos": [500, 550],
+      "size": {"0": 400, "1": 200},
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {"name": "clip", "type": "CLIP", "link": 7, "slot_index": 0}
+      ],
+      "outputs": [
+        {"name": "CONDITIONING", "type": "CONDITIONING", "links": [10], "slot_index": 0}
+      ],
+      "properties": {"Node name for S&R": "CLIPTextEncode"},
+      "widgets_values": ["black and white, monochrome, sketch, drawing, engraving, illustration, etching, CGI, render, plastic surfaces, washed out, overexposed, distorted arches, malformed columns, unrealistic textures, text, watermark"]
+    },
+    {
+      "id": 8,
+      "type": "SaveImage",
+      "pos": [1350, 100],
+      "size": {"0": 315, "1": 314},
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {"name": "images", "type": "IMAGE", "link": 12, "slot_index": 0}
+      ],
+      "outputs": [],
+      "properties": {"Node name for S&R": "SaveImage"},
+      "widgets_values": ["BILDWORK_IMG2IMG"]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 3, 0, "IMAGE"],
+    [2, 1, 0, 3, 0, "IMAGE"],
+    [3, 2, 0, 4, 0, "MODEL"],
+    [4, 2, 1, 5, 0, "CLIP"],
+    [5, 2, 2, 3, 1, "VAE"],
+    [6, 3, 0, 4, 3, "LATENT"],
+    [7, 2, 1, 7, 0, "CLIP"],
+    [8, 2, 2, 6, 1, "VAE"],
+    [9, 5, 0, 4, 1, "CONDITIONING"],
+    [10, 7, 0, 4, 2, "CONDITIONING"],
+    [11, 4, 0, 6, 0, "LATENT"],
+    [12, 6, 0, 8, 0, "IMAGE"]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}

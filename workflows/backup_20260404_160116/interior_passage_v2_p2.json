@@ -1,0 +1,132 @@
+{
+  "title": "Interior Pass 2 - Material Refinement",
+  "description": "Pass 2: Refine material realism, color balance, and photographic finish",
+  "timestamp": "2026-04-02T08:00:00Z",
+  "version": "1.0",
+  "nodes": [
+    {
+      "id": "LoadImage",
+      "type": "LoadImage",
+      "pos": [100, 100],
+      "size": {"0": 315, "1": 350},
+      "inputs": {"image": ""},
+      "outputs": [{"name": "IMAGE", "type": "IMAGE"}],
+      "properties": {"P-node": {"class": "LoadImage"}},
+      "values": {
+        "image": "interior_passage_pass1_output.png"
+      }
+    },
+    {
+      "id": "CheckpointLoader",
+      "type": "CheckpointLoaderSimple",
+      "pos": [100, 500],
+      "size": {"0": 315, "1": 230},
+      "inputs": {"ckpt_name": "sd_xl_base_1.0.safetensors"},
+      "outputs": [{"name": "MODEL", "type": "MODEL"}, {"name": "CLIP", "type": "CLIP"}, {"name": "VAE", "type": "VAE"}],
+      "properties": {"P-node": {"class": "CheckpointLoaderSimple"}},
+      "values": {
+        "ckpt_name": "sd_xl_base_1.0.safetensors"
+      }
+    },
+    {
+      "id": "CLIP Positive",
+      "type": "CLIPTextEncode",
+      "pos": [100, 900),
+      "size": {"0": 315, "1": 106},
+      "inputs": {"clip": ["CheckpointLoader", "1"], "text": "prompt"},
+      "outputs": [{"name": "CONDITIONING", "type": "CONDITIONING"}],
+      "properties": {"P-node": {"class": "CLIPTextEncode"}},
+      "values": {
+        "text": "high quality architectural photograph, refined material textures, accurate color balance, natural lighting, professional finish, photorealistic stone surfaces, subtle shadows, realistic depth, sharp details"
+      }
+    },
+    {
+      "id": "CLIP Negative",
+      "type": "CLIPTextEncode",
+      "pos": [100, 1050),
+      "size": {"0": 315, "1": 106},
+      "inputs": {"clip": ["CheckpointLoader", "1"], "text": "prompt"},
+      "outputs": [{"name": "CONDITIONING", "type": "CONDITIONING"}],
+      "properties": {"P-node": {"class": "CLIPTextEncode"}},
+      "values": {
+        "black and white, monochrome, sketch, drawing, overexposed, underexposed, plastic, CGl, low quality, blurry, noisy, artifacts"
+      }
+    },
+    {
+      "id": "VAEEncode",
+      "type": "VAEEncode",
+      "pos": [500, 1000),
+      "size": {"0": 315, "1": 46},
+      "inputs": {"pixels": ["LoadImage", "0"], "vae": ["CheckpointLoader", "2"]},
+      "outputs": [{"name": "LATENT", "type": "LATENT"}],
+      "properties": {"P-node": {"class": "VAEEncode"}},
+      "values": {}
+    },
+    {
+      "id": "EmptyLatentImage",
+      "type": "EmptyLatentImage",
+      "pos": [100, 1200),
+      "size": {"0": 315, "1": 106},
+      "inputs": {"width": 1024, "height": 768, "batch_size": 1},
+      "outputs": [{"name": "LATENT", "type": "LATENT"}],
+      "properties": {"P-node": {"class": "EmptyLatentImage"}},
+      "values": {
+        "width": 1024,
+        "height": 768,
+        "batch_size": 1
+      }
+    },
+    {
+      "id": "KSampler",
+      "type": "KSampler",
+      "pos": [900, 1000),
+      "size": {"0": 315, "1": 270},
+      "inputs": {
+        "model": ["CheckpointLoader", "0"],
+        "positive": ["CLIP Positive", "0"],
+        "negative": ["CLIP Negative", "1"],
+        "latent_image": ["VAEEncode", "0"],
+        "seed": ["RandomNoise", "seed"],
+        "steps": ["KSampler", "steps"],
+        "cfg": ["KSampler", "cfg"]
+      },
+      "outputs": [{"name": "LATENT", "type": "LATENT"}, {"name": "IMAGE", "type": "IMAGE"}],
+      "properties": {"P-node": {"class": "KSampler"}},
+      "values": {
+        "steps": 24,
+        "cfg": 4.8,
+        "sampler_name": "euler_ancestral",
+        "scheduler": "normal",
+        "denoise": 0.15,
+        "seed": -1
+      }
+    },
+    {
+      "id": "SaveImage",
+      "type": "SaveImage",
+      "pos": [1300, 1000),
+      "size": {"0": 315, "1": 270},
+      "inputs": {"images": ["KSampler", "0"]},
+      "outputs": [],
+      "properties": {"P-node": {"class": "SaveImage"}},
+      "values": {
+        "filename_prefix": "interior_passage_pass2"
+      }
+    }
+  ],
+  "config": {
+    "denoise": 0.15,
+    "cfg": 4.8,
+    "steps": 24,
+    "width": 1024,
+    "height": 768,
+    "sampler": "euler_ancestral",
+    "scheduler": "normal"
+  },
+  "parameters": {
+    "pass": 2,
+    "preset": "interior_passage_v2_p2",
+    "model": "sd_xl_base_1.0.safetensors",
+    "input": "pass1_output"
+  }
+}

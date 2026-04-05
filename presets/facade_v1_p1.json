@@ -1,0 +1,49 @@
+{
+  "name": "facade_v1_p1",
+  "description": "Pass 1: Convert architectural facade sketches to photorealistic building exteriors",
+  "version": "1.0.0",
+  "preset_type": "facade",
+  "pass": 1,
+  "intended_image_type": "Building facade sketches, elevation drawings, exterior architectural sketches",
+  "pass_purpose": "Translate facade sketch to photorealistic building exterior while preserving windows, doors, proportions",
+  "generation_params": {
+    "steps": 28,
+    "cfg_scale": 6.0,
+    "denoise": 0.35,
+    "sampler": "euler_ancestral",
+    "scheduler": "normal",
+    "seed": -1,
+    "width": 768,
+    "height": 1024
+  },
+  "model_config": {
+    "base": "sd_xl_base_1.0.safetensors"
+  },
+  "controlnet_planned": [
+    {"model": "softedge", "weight": 0.9, "status": "planned"},
+    {"model": "depth", "weight": 0.5, "status": "planned"}
+  ],
+  "prompt_templates": {
+    "positive": "photorealistic building facade, modern architecture, detailed windows and doors, realistic materials (stone, glass, metal), natural daylight, architectural photography, high quality",
+    "negative": "drawing, sketch, monochrome, engraving, illustration, flat, plastic, CGI, render, distorted proportions, malformed windows, text, watermark"
+  },
+  "starting_parameter_ranges": {
+    "denoise": {"min": 0.30, "max": 0.40},
+    "cfg_scale": {"min": 5.5, "max": 6.5},
+    "steps": {"min": 25, "max": 32}
+  },
+  "expected_failure_modes": [
+    "Window/door positions may shift if denoise too high",
+    "Material may be too generic",
+    "Proportions may distort without ControlNet"
+  ],
+  "review_criteria": [
+    "Window/door positions preserved",
+    "Building proportions correct",
+    "Materials realistic (not plastic)",
+    "Architectural details clear",
+    "Color present (not monochrome)"
+  ],
+  "pass_2_input": true,
+  "notes": "Facade presets need precise geometry control. ControlNet critical for window/door alignment."
+}

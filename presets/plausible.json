@@ -1,0 +1,19 @@
+{
+  "name": "plausible",
+  "description": "Photorealistic modern building with natural lighting",
+  "model_config": {
+    "base": "flux-2-klein-4b-fp8.safetensors",
+    "variant": "klein"
+  },
+  "prompt_templates": {
+    "positive": "photorealistic modern color photograph, high quality, detailed architecture, natural lighting, realistic materials",
+    "negative": "drawing, painting, sketch, illustration, low quality, blurry, distorted, text, watermark"
+  },
+  "generation_params": {
+    "steps": 4,
+    "cfg_scale": 1,
+    "seed": -1,
+    "sampler": "euler",
+    "scheduler": "normal"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {"image": "309.jpg", "upload": "image"}
+  },
+  "2": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": {"ckpt_name": "sd_xl_base_1.0.safetensors"}
+  },
+  "3": {
+    "class_type": "VAEEncode",
+    "inputs": {"pixels": ["1", 0], "vae": ["2", 2]}
+  },
+  "4": {
+    "class_type": "ControlNetLoader",
+    "inputs": {"control_net_name": "controlnet_union_sdxl.safetensors"}
+  },
+  "5": {
+    "class_type": "ControlNetApplyAdvanced",
+    "inputs": {
+      "positive": ["6", 0],
+      "negative": ["7", 0],
+      "control_net": ["4", 0],
+      "image": ["1", 0],
+      "strength": 0.75,
+      "start_percent": 0.0,
+      "end_percent": 1.0
+    }
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["2", 1],
+      "text": "present-day color architectural photograph of an interior passage with vaulted ceiling, realistic stone masonry, natural daylight, authentic limestone textures, documentary photography style, warm gray tones, professional architectural photography, high resolution"
+    }
+  },
+  "7": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["2", 1],
+      "text": "black and white, monochrome, sketch, drawing, engraving, illustration, CGI, 3D render, plastic surfaces, washed out, overexposed, distorted geometry, malformed arches, unrealistic textures, text, watermark, low quality"
+    }
+  },
+  "8": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 12345,
+      "steps": 32,
+      "cfg": 5.2,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "denoise": 0.42,
+      "model": ["2", 0],
+      "positive": ["5", 0],
+      "negative": ["5", 1],
+      "latent_image": ["3", 0]
+    }
+  },
+  "9": {
+    "class_type": "VAEDecode",
+    "inputs": {"samples": ["8", 0], "vae": ["2", 2]}
+  },
+  "10": {
+    "class_type": "SaveImage",
+    "inputs": {"filename_prefix": "controlnet_test_309", "images": ["9", 0]}
+  }
+}

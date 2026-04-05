@@ -1,0 +1,45 @@
+{
+  "name": "facades_modernize",
+  "description": "Convert historical building facades to modern photorealistic views",
+  "version": "1.0.0",
+  "preset_type": "facades",
+  "controlnet_config": {
+    "primary": {
+      "model": "controlnet-sdxl-canny",
+      "weight": 1.0,
+      "start_percent": 0.0,
+      "end_percent": 1.0
+    },
+    "secondary": {
+      "model": "controlnet-sdxl-depth",
+      "weight": 0.5,
+      "start_percent": 0.0,
+      "end_percent": 1.0
+    }
+  },
+  "generation_params": {
+    "steps": 20,
+    "cfg_scale": 7.5,
+    "sampler": "euler_ancestral",
+    "scheduler": "normal",
+    "seed": -1,
+    "width": 1024,
+    "height": 768
+  },
+  "model_config": {
+    "base": "sd_xl_base_1.0.safetensors",
+    "refiner": "sd_xl_refiner_1.0.safetensors",
+    "refiner_start": 0.8
+  },
+  "preprocessing": {
+    "depth_estimator": "midas",
+    "canny_low_threshold": 100,
+    "canny_high_threshold": 200,
+    "mlsd_threshold": 0.6
+  },
+  "prompt_templates": {
+    "positive": "photorealistic modern building facade, architectural photography, high quality, detailed, natural lighting, 8k",
+    "negative": "drawing, painting, sketch, illustration, engraving, low quality, blurry, distorted, text, watermark"
+  },
+  "notes": "Optimized for building facades. Canny edge detection preserves sharp architectural lines. Consider MLSD for perspective lines."
+}

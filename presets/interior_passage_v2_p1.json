@@ -1,0 +1,63 @@
+{
+  "name": "interior_passage_v2_p1",
+  "description": "Pass 1: Structure-preserving translation for interior passages, vaulted corridors, cloisters. Uses ControlNet Union for edge/perspective preservation.",
+  "version": "2.1.0",
+  "preset_type": "interior_passage",
+  "pass": 1,
+  "baseline_only": true,
+  "production_ready": false,
+  "intended_image_type": "Interior architectural sketches: vaulted corridors, arcades, cloisters, passages with arches and columns",
+  "pass_purpose": "Translate from sketch medium to color photograph while preserving geometry and composition",
+  "generation_params": {
+    "steps": 32,
+    "cfg_scale": 5.2,
+    "denoise": 0.42,
+    "sampler": "euler_ancestral",
+    "scheduler": "normal",
+    "seed": -1,
+    "width": 1024,
+    "height": 768
+  },
+  "model_config": {
+    "base": "sd_xl_base_1.0.safetensors"
+  },
+  "controlnet": {
+    "model": "controlnet_union_sdxl.safetensors",
+    "weight": 0.75,
+    "start_percent": 0.0,
+    "end_percent": 1.0,
+    "status": "available",
+    "notes": "Union model handles canny/softedge/depth - calibrated for interior_passage"
+  },
+  "prompt_templates": {
+    "positive": "present-day color architectural photograph of the same vaulted stone passage, realistic limestone masonry, authentic stone floor slabs, documentary photography, natural daylight, subtle warm gray tones, realistic shadows, photographed with a modern camera",
+    "negative": "black and white, monochrome, sketch, drawing, engraving, illustration, etching, CGI, render, plastic surfaces, washed out, overexposed, distorted arches, malformed columns, unrealistic textures, text, watermark"
+  },
+  "starting_parameter_ranges": {
+    "denoise": {"min": 0.38, "max": 0.45, "note": "with ControlNet Union"},
+    "cfg_scale": {"min": 5.0, "max": 5.5},
+    "steps": {"min": 30, "max": 36}
+  },
+  "calibration_status": {
+    "tuning_images": ["309.jpg", "317.jpg", "324.jpg"],
+    "holdout_images": ["330.jpg", "331.jpg"],
+    "tested_variants": ["A (0.38)", "B (0.42)", "C (0.45)"],
+    "best_variant": "B (0.42, cfg=5.2, steps=32)",
+    "status": "in_progress"
+  },
+  "expected_failure_modes": [
+    "denoise < 0.35: Output stays trapped in sketch medium (monochrome)",
+    "denoise > 0.50: Geometry drift, composition changes",
+    "cfg > 6.0: Forces prompt too strongly, loses source character",
+    "Missing 'black and white' in negative: Output remains monochrome"
+  ],
+  "review_criteria": [
+    "Color present (not monochrome or desaturated)",
+    "Arches and columns preserved in correct positions",
+    "Perspective maintained from source",
+    "Stone/material texture visible (not smooth plastic)",
+    "Natural lighting (not flat or overexposed)"
+  ],
+  "pass_2_input": true,
+  "notes": "v2.1 adds ControlNet Union support. Calibration in progress - testing denoise variants 0.38, 0.42, 0.45 on tuning set. Production_ready=false until holdout validation complete."
+}

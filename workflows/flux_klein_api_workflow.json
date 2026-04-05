@@ -1,0 +1,58 @@
+{
+  "1": {
+    "inputs": {
+      "seed": 42,
+      "steps": 4,
+      "cfg": 1.5,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1.0,
+      "positive": ["2", 0],
+      "negative": ["3", 0],
+      "model": ["4", 0],
+      "image": ["5", 0]
+    },
+    "class_type": "KSampler"
+  },
+  "2": {
+    "inputs": {
+      "text": "prompt",
+      "clip": ["4", 1]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "3": {
+    "inputs": {
+      "text": "",
+      "clip": ["4", 1]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "flux-2-klein-4b-fp8.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple"
+  },
+  "5": {
+    "inputs": {
+      "image": "input.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage"
+  },
+  "6": {
+    "inputs": {
+      "samples": ["1", 0],
+      "vae": ["4", 2]
+    },
+    "class_type": "VAEDecode"
+  },
+  "7": {
+    "inputs": {
+      "filename_prefix": "FLUX_KLEIN",
+      "images": ["6", 0]
+    },
+    "class_type": "SaveImage"
+  }
+}

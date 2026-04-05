@@ -1,0 +1,121 @@
+{
+  "3": {
+    "inputs": {
+      "seed": 42,
+      "steps": 20,
+      "cfg": 7.5,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": ["4", 0],
+      "positive": ["11", 0],
+      "negative": ["7", 0],
+      "latent_image": ["13", 0]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "sd_xl_base_1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "5": {
+    "inputs": {
+      "image": "input.jpg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image - Sketch Input"
+    }
+  },
+  "6": {
+    "inputs": {
+      "text": "photorealistic modern city view, high quality, detailed architecture, natural lighting, 8k, professional photography, vibrant colors, realistic textures",
+      "clip": ["4", 1]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "7": {
+    "inputs": {
+      "text": "sketch, drawing, pencil, pen, lines, outline, unfinished, low quality, blurry, distorted, text, watermark, signature, annotation, handwriting",
+      "clip": ["4", 1]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Negative Prompt)"
+    }
+  },
+  "8": {
+    "inputs": {
+      "filename_prefix": "bildwerk_output/",
+      "images": ["12", 0]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "9": {
+    "inputs": {
+      "control_net_name": "controlnet-sdxl-softedge.safetensors"
+    },
+    "class_type": "ControlNetLoader",
+    "_meta": {
+      "title": "ControlNet Loader (SoftEdge)"
+    }
+  },
+  "10": {
+    "inputs": {
+      "control_net": ["9", 0],
+      "image": ["5", 0],
+      "strength": 0.85,
+      "start_percent": 0,
+      "end_percent": 1
+    },
+    "class_type": "ControlNetApply",
+    "_meta": {
+      "title": "Apply ControlNet SoftEdge"
+    }
+  },
+  "11": {
+    "inputs": {
+      "conditioning": ["6", 0],
+      "control_net": ["10", 0]
+    },
+    "class_type": "ConditioningAverage",
+    "_meta": {
+      "title": "Conditioning + ControlNet"
+    }
+  },
+  "12": {
+    "inputs": {
+      "samples": ["3", 0],
+      "vae": ["4", 2]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "13": {
+    "inputs": {
+      "pixels": ["5", 0],
+      "vae": ["4", 2]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  }
+}

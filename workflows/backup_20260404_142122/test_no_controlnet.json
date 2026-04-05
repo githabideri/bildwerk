@@ -1,0 +1,51 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {"image": "309.jpg", "upload": "image"}
+  },
+  "2": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": {"ckpt_name": "sd_xl_base_1.0.safetensors"}
+  },
+  "3": {
+    "class_type": "VAEEncode",
+    "inputs": {"pixels": ["1", 0], "vae": ["2", 2]}
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["2", 1],
+      "text": "present-day color architectural photograph of an interior passage with vaulted ceiling, realistic stone masonry, natural daylight, authentic limestone textures, documentary photography style, warm gray tones, professional architectural photography, high resolution"
+    }
+  },
+  "5": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["2", 1],
+      "text": "black and white, monochrome, sketch, drawing, engraving, illustration, etching, CGI, 3D render, plastic surfaces, washed out, overexposed, distorted geometry, malformed arches, unrealistic textures, text, watermark, low quality"
+    }
+  },
+  "6": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 12345,
+      "steps": 32,
+      "cfg": 5.2,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "denoise": 0.42,
+      "model": ["2", 0],
+      "positive": ["4", 0],
+      "negative": ["5", 0],
+      "latent_image": ["3", 0]
+    }
+  },
+  "7": {
+    "class_type": "VAEDecode",
+    "inputs": {"samples": ["6", 0], "vae": ["2", 2]}
+  },
+  "8": {
+    "class_type": "SaveImage",
+    "inputs": {"filename_prefix": "test_no_controlnet", "images": ["7", 0]}
+  }
+}

@@ -1,0 +1,16 @@
+# bildwerk Router Dependencies
+# Install with: pip install -r requirements.txt
+
+# Async HTTP and file I/O
+aiohttp>=3.9.0
+aiofiles>=23.0.0
+
+# Configuration
+pyyaml>=6.0
+
+# Metrics
+prometheus-client>=0.19.0
+
+# Image processing (optional, for auto-QC)
+opencv-python-headless>=4.8.0
+numpy>=1.24.0
